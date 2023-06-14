@@ -9,9 +9,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const isElementPresent = injectionResults[0].result;
 
         if (isElementPresent) {
-            result.textContent = 'The element is present on the page. It has been clicked.';
+            result.textContent = 'Ad detected. Skipped';
         } else {
-            result.textContent = 'The element is not present on the page.';
+            result.textContent = 'No ads playing';
         }
     });
 });

@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Copy Items",
-    "version": "1.0",
+    "version": "1.1",
     "description": "Copy items with specific HTML attribute from a web page",
     "permissions": [
         "clipboardWrite",
