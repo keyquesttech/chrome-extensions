@@ -1,14 +1,20 @@
 {
     "manifest_version": 3,
-    "name": "YouTube Auto Skip Ads",
+    "name": "Auto Skip Ads",
     "version": "1.0",
-    "description": "Automatically skip YouTube ads",
+    "icons": {
+        "16": "images/icon16.png",
+        "48": "images/icon48.png",
+        "128": "images/icon128.png"
+    },
     "permissions": [
         "activeTab",
-        "storage",
         "scripting",
-        "tabs"
+        "storage"
     ],
+    "background": {
+        "service_worker": "background.js"
+    },
     "action": {
         "default_popup": "popup.html",
         "default_icon": {
@@ -16,9 +22,6 @@
             "48": "images/icon48.png",
             "128": "images/icon128.png"
         }
-    },
-    "background": {
-        "service_worker": "background.js"
     },
     "content_scripts": [
         {
@@ -28,11 +31,14 @@
             "js": [
                 "content.js"
             ]
+        },
+        {
+            "matches": [
+                "*://*.netflix.com/*"
+            ],
+            "js": [
+                "netflixContent.js"
+            ]
         }
-    ],
-    "icons": {
-        "16": "images/icon16.png",
-        "48": "images/icon48.png",
-        "128": "images/icon128.png"
-    }
+    ]
 }

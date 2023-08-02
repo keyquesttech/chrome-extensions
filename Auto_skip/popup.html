@@ -3,114 +3,33 @@
 
 <head>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
-
         body {
-            width: 200px;
-            height: 200px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            background-color: #ff8672;
-            font-family: 'Quicksand', sans-serif;
-            margin: 0;
-            padding: 0;
+            width: 300px;
+            padding: 10px;
         }
 
-        h1 {
-            text-align: center;
-            margin: 10px 0 0 0;
-        }
-
-        .toggle-container {
+        .option {
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            flex-direction: row;
-            margin-top: 15px;
         }
 
-        .toggle-container label {
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 700;
-            font-size: 18px;
-            /* Increased font size */
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-            margin-left: 10px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        input:checked+.slider {
-            background-color: #2196F3;
-        }
-
-        input:focus+.slider {
-            box-shadow: 0 0 1px #2196F3;
-        }
-
-        input:checked+.slider:before {
-            -webkit-transform: translateX(26px);
-            -ms-transform: translateX(26px);
-            transform: translateX(26px);
-        }
-
-        /* Rounded sliders */
-        .slider.round {
-            border-radius: 34px;
-        }
-
-        .slider.round:before {
-            border-radius: 50%;
+        .option input {
+            margin-right: 10px;
         }
     </style>
-    <script src="popup.js"></script> <!-- Include a new JS file to handle toggle changes -->
 </head>
 
 <body>
-    <h1>Auto skip</h1>
-    <div class="toggle-container">
-        <label for="toggleSwitch">YouTube</label>
-        <label class="switch">
-            <input type="checkbox" id="toggleSwitch">
-            <span class="slider round"></span>
-        </label>
+    <div class="option">
+        <input type="checkbox" id="youtubeToggle">
+        <label for="youtubeToggle">Enable YouTube Auto-Skip</label>
     </div>
+    <div class="option">
+        <input type="checkbox" id="netflixToggle">
+        <label for="netflixToggle">Enable Netflix Auto-Skip</label>
+    </div>
+    <script src="popup.js"></script>
 </body>
 
 </html>
