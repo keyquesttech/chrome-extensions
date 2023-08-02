@@ -1,7 +1,14 @@
 {
     "manifest_version": 3,
-    "name": "Adskipper",
+    "name": "YouTube Auto Skip Ads",
     "version": "1.0",
+    "description": "Automatically skip YouTube ads",
+    "permissions": [
+        "activeTab",
+        "storage",
+        "scripting",
+        "tabs"
+    ],
     "action": {
         "default_popup": "popup.html",
         "default_icon": {
@@ -13,12 +20,15 @@
     "background": {
         "service_worker": "background.js"
     },
-    "permissions": [
-        "activeTab",
-        "scripting"
-    ],
-    "host_permissions": [
-        "https://www.youtube.com/*"
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.youtube.com/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
     ],
     "icons": {
         "16": "images/icon16.png",

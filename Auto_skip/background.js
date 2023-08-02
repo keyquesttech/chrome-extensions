@@ -1,21 +1,26 @@
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'complete' && /^https:\/\/www\.youtube\.com/.test(tab.url)) {
-        chrome.scripting.executeScript({
-            target: { tabId: tab.id },
-            function: checkForElement,
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.state !== undefined) {
+        chrome.storage.sync.set({ state: request.state }, function () {
+            if (request.state) {
+                chrome.tabs.query({ url: '*://*.youtube.com/*' }, function (tabs) {
+                    for (let tab of tabs) {
+                        chrome.scripting.executeScript({
+                            target: { tabId: tab.id },
+                            files: ['content.js']
+                        });
+                    }
+                });
+            }
         });
     }
 });
 
-function checkForElement() {
-    const checkElement = setInterval(function () {
-        const elements = document.getElementsByClassName('ytp-ad-skip-button ytp-button');
-        for (let i = 0; i < elements.length; i++) {
-            if (elements[i].innerText == 'Skip Ads') {
-                console.log('Skip Ads button is found');
-                elements[i].click(); // click the button
-                console.log('Skip Ads button clicked');
+chrome.storage.onChanged.addListener(function (changes, areaName) {
+    if (changes.state) {
+        chrome.tabs.query({ url: '*://*.youtube.com/*' }, function (tabs) {
+            for (let tab of tabs) {
+                chrome.tabs.sendMessage(tab.id, { state: changes.state.newValue });
             }
-        }
-    }, 1000); // Check every 1 second
-}
+        });
+    }
+});
