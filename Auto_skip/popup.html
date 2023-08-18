@@ -97,6 +97,33 @@
         .slider.round:before {
             border-radius: 50%;
         }
+
+        /* New Styles for Donate Button */
+        .donate-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .donate-button {
+            background-color: #2196F3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.4s;
+            margin-bottom: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .donate-button:hover {
+            background-color: #1a78c2;
+        }
     </style>
 </head>
 
@@ -126,6 +153,14 @@
         </label>
         <span id="hboStatus"></span>
     </div>
+
+    <!-- Updated Donate Button Container -->
+    <div class="donate-container">
+        <a href="https://www.paypal.com/donate/?hosted_button_id=BBKRUHCJLJ4QE" target="_blank">
+            <button class="donate-button">Donate</button>
+        </a>
+    </div>
+    
     <script src="popup.js"></script>
 </body>
 
