@@ -1,17 +1,16 @@
 setInterval(() => {
-    // Use chrome.storage.local instead of chrome.storage.sync
     chrome.storage.local.get(['youtubeState'], function (data) {
         if (data.youtubeState) {
             try {
-                // Attempt to click the skip button if it exists
                 let skipBtn = document.querySelector('.ytp-ad-skip-button.ytp-button') ||
-                    document.querySelector('.ytp-ad-overlay-close-button') ||
-                    Array.from(document.querySelectorAll('button')).find(el => /(?:[Ss]kip [Aa]d|[Oo]mitir [Aa]nuncio)/.test(el.textContent));
+                              document.querySelector('.ytp-ad-overlay-close-button') ||
+                              document.querySelector('.ytp-ad-skip-button-modern.ytp-button') || 
+                              document.querySelector('.ytp-skip-ad-button.ytp-skip-ad-button--new--pos.ytp-ad-skip-button-modern') || 
+                              document.querySelector('.ytp-skip-ad-button');  // Direct class for the button provided
                 if (skipBtn) {
                     skipBtn.click();
                 }
             } catch (error) {
-                // Log any errors to the console for troubleshooting
                 console.error('Error trying to skip ad:', error);
             }
         }
