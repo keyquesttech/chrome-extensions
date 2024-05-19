@@ -40,5 +40,11 @@
                 "netflixContent.js"
             ]
         }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["donate.html"],
+            "matches": ["<all_urls>"]
+        }
     ]
 }

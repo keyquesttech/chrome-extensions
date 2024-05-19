@@ -1,22 +1,37 @@
-let youtubeToggle = document.getElementById('youtubeToggle');
-let netflixToggle = document.getElementById('netflixToggle');
+document.addEventListener('DOMContentLoaded', function () {
+    let youtubeToggle = document.getElementById('youtubeToggle');
+    let netflixToggle = document.getElementById('netflixToggle');
+    let youtubeStatus = document.getElementById('youtubeStatus');
+    let netflixStatus = document.getElementById('netflixStatus');
 
-let youtubeStatus = document.getElementById('youtubeStatus');
-let netflixStatus = document.getElementById('netflixStatus');
+    // Show the donate screen for 5 seconds
+    const donateScreen = document.getElementById('donateScreen');
+    const timerElement = document.getElementById('timer');
+    let seconds = 5;
 
-// Use chrome.storage.local to get the saved states
-chrome.storage.local.get(['youtubeState', 'netflixState'], function (data) {
-    youtubeToggle.checked = data.youtubeState || false;
-    netflixToggle.checked = data.netflixState || false;
-});
+    donateScreen.style.display = 'flex';
 
-// Use chrome.storage.local to save the states
-youtubeToggle.addEventListener('change', function () {
-    chrome.storage.local.set({ youtubeState: this.checked });
-    youtubeStatus.textContent = this.checked ? 'Enabled' : 'Disabled';
-});
+    const countdown = setInterval(() => {
+        seconds--;
+        timerElement.textContent = seconds + 's';
+        if (seconds <= 0) {
+            clearInterval(countdown);
+            donateScreen.style.display = 'none';
+        }
+    }, 1000);
 
-netflixToggle.addEventListener('change', function () {
-    chrome.storage.local.set({ netflixState: this.checked });
-    netflixStatus.textContent = this.checked ? 'Enabled' : 'Disabled';
+    chrome.storage.local.get(['youtubeState', 'netflixState'], function (data) {
+        youtubeToggle.checked = data.youtubeState || false;
+        netflixToggle.checked = data.netflixState || false;
+    });
+
+    youtubeToggle.addEventListener('change', function () {
+        chrome.storage.local.set({ youtubeState: this.checked });
+        youtubeStatus.textContent = this.checked ? 'Enabled' : 'Disabled';
+    });
+
+    netflixToggle.addEventListener('change', function () {
+        chrome.storage.local.set({ netflixState: this.checked });
+        netflixStatus.textContent = this.checked ? 'Enabled' : 'Disabled';
+    });
 });
