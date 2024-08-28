@@ -39,12 +39,12 @@
     </style>
 </head>
 <body>
-    <div class="timer" id="timer">5s</div>
+    <div class="timer" id="timer">1s</div>
     <a href="https://www.paypal.com/donate/?hosted_button_id=BBKRUHCJLJ4QE" target="_blank">
         <button class="donate-button">Donate</button>
     </a>
     <script>
-        let seconds = 5;
+        let seconds = 1;
         const timerElement = document.getElementById('timer');
         const countdown = setInterval(() => {
             timerElement.textContent = `${--seconds}s`;
