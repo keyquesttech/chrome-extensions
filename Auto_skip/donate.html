@@ -47,8 +47,7 @@
         let seconds = 5;
         const timerElement = document.getElementById('timer');
         const countdown = setInterval(() => {
-            seconds--;
-            timerElement.textContent = seconds + 's';
+            timerElement.textContent = `${--seconds}s`;
             if (seconds <= 0) {
                 clearInterval(countdown);
                 window.close();

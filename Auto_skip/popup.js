@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
-    let youtubeToggle = document.getElementById('youtubeToggle');
-    let netflixToggle = document.getElementById('netflixToggle');
-    let youtubeStatus = document.getElementById('youtubeStatus');
-    let netflixStatus = document.getElementById('netflixStatus');
+    const youtubeToggle = document.getElementById('youtubeToggle');
+    const netflixToggle = document.getElementById('netflixToggle');
+    const youtubeStatus = document.getElementById('youtubeStatus');
+    const netflixStatus = document.getElementById('netflixStatus');
 
     // Show the donate screen for 5 seconds
     const donateScreen = document.getElementById('donateScreen');
@@ -12,8 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
     donateScreen.style.display = 'flex';
 
     const countdown = setInterval(() => {
-        seconds--;
-        timerElement.textContent = seconds + 's';
+        timerElement.textContent = `${--seconds}s`;
         if (seconds <= 0) {
             clearInterval(countdown);
             donateScreen.style.display = 'none';
@@ -23,15 +22,21 @@ document.addEventListener('DOMContentLoaded', function () {
     chrome.storage.local.get(['youtubeState', 'netflixState'], function (data) {
         youtubeToggle.checked = data.youtubeState || false;
         netflixToggle.checked = data.netflixState || false;
+        updateStatusText(youtubeToggle.checked, youtubeStatus);
+        updateStatusText(netflixToggle.checked, netflixStatus);
     });
 
     youtubeToggle.addEventListener('change', function () {
         chrome.storage.local.set({ youtubeState: this.checked });
-        youtubeStatus.textContent = this.checked ? 'Enabled' : 'Disabled';
+        updateStatusText(this.checked, youtubeStatus);
     });
 
     netflixToggle.addEventListener('change', function () {
         chrome.storage.local.set({ netflixState: this.checked });
-        netflixStatus.textContent = this.checked ? 'Enabled' : 'Disabled';
+        updateStatusText(this.checked, netflixStatus);
     });
+
+    function updateStatusText(isEnabled, statusElement) {
+        statusElement.textContent = isEnabled ? 'Enabled' : 'Disabled';
+    }
 });
