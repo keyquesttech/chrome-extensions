@@ -3,7 +3,6 @@ let hasDisliked = false;
 
 chrome.storage.local.get(['youtubeState'], function (data) {
     youtubeState = data.youtubeState || false;
-    console.log('YouTube state loaded:', youtubeState);
     if (youtubeState) {
         initAdSkipper();
         initAutoDislike();
@@ -13,7 +12,6 @@ chrome.storage.local.get(['youtubeState'], function (data) {
 chrome.storage.onChanged.addListener((changes, namespace) => {
     if (changes.youtubeState) {
         youtubeState = changes.youtubeState.newValue;
-        console.log('YouTube state changed:', youtubeState);
         if (youtubeState) {
             initAdSkipper();
             initAutoDislike();
@@ -22,7 +20,6 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
 });
 
 function initAdSkipper() {
-    console.log('Initializing ad skipper');
     const observer = new MutationObserver(() => {
         if (youtubeState) {
             trySkipAd();
@@ -49,17 +46,15 @@ function trySkipAd() {
             const skipBtn = document.querySelector(selector);
             if (skipBtn) {
                 skipBtn.click();
-                console.log('Ad skipped successfully');
                 return;
             }
         }
     } catch (error) {
-        console.error('Error trying to skip YouTube ad:', error);
+        // Error handling removed
     }
 }
 
 function initAutoDislike() {
-    console.log('Initializing auto dislike');
     const observer = new MutationObserver(() => {
         if (youtubeState && !hasDisliked) {
             setTimeout(checkChannelAndDislike, 10000); // 10 second delay
@@ -73,32 +68,22 @@ function initAutoDislike() {
 }
 
 function checkChannelAndDislike() {
-    console.log('Checking channel and dislike status');
-    const channelLink = document.querySelector('a.yt-simple-endpoint[href="/@LinusTechTips"]');
-    if (channelLink && channelLink.textContent === 'Linus Tech Tips') {
-        console.log('Linus Tech Tips channel detected');
-        const dislikeButton = document.querySelector('button[aria-label="Dislike this video"]');
+    const channelNameElement = document.querySelector('ytd-channel-name yt-formatted-string#text');
+    if (channelNameElement && window.channelsToDislike.includes(channelNameElement.textContent.trim())) {
+        const dislikeButton = document.querySelector('dislike-button-view-model button') || 
+                              document.querySelector('button[aria-label="Dislike this video"]') ||
+                              document.querySelector('ytd-menu-renderer button[aria-label^="Dislike"]');
         if (dislikeButton) {
             if (dislikeButton.getAttribute('aria-pressed') === 'false') {
-                console.log('Attempting to dislike video');
                 dislikeButton.click();
                 hasDisliked = true;
-                console.log('Video disliked: Linus Tech Tips');
-            } else {
-                console.log('Video already disliked');
             }
-        } else {
-            console.log('Dislike button not found');
         }
-    } else {
-        console.log('Not a Linus Tech Tips video');
     }
 }
 
-// Reset hasDisliked when navigating to a new video
 function resetDislikeStatus() {
     hasDisliked = false;
-    console.log('Dislike status reset');
 }
 
 // Listen for YouTube navigation events
@@ -114,7 +99,6 @@ new MutationObserver(() => {
 // Listen for messages from the background script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "checkForAds") {
-        console.log('Received checkForAds message');
         trySkipAd();
         setTimeout(checkChannelAndDislike, 10000); // 10 second delay
         sendResponse({status: "Checked for ads and dislikes"});
