@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
-    "name": "YouTube Auto Skip",
-    "version": "2.2",
+    "name": "YouTube Auto Skip and Dislike",
+    "version": "2.4",
     "description": "Automatically skips ads and dislikes videos from specified channels on YouTube",
     "permissions": [
         "storage",
@@ -29,7 +29,8 @@
             "js": [
                 "channels.js",
                 "content.js"
-            ]
+            ],
+            "run_at": "document_end"
         }
     ]
 }
