@@ -1,8 +1,8 @@
-let youtubeState = false;
+let youtubeState = true;
 let hasDisliked = false;
 
 chrome.storage.local.get(['youtubeState'], function (data) {
-    youtubeState = data.youtubeState || false;
+    youtubeState = data.youtubeState !== undefined ? data.youtubeState : true;
     if (youtubeState) {
         initAdSkipper();
         initAutoDislike();
@@ -20,25 +20,58 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
 });
 
 function initAdSkipper() {
-    setInterval(trySkipAd, 1000);
+    setInterval(skipAd, 250);  // Check more frequently
 }
 
-function trySkipAd() {
+function skipAd() {
     if (!youtubeState) return;
 
-    const skipSelectors = [
+    const adElements = [
+        '#contents > ytd-promoted-sparkles-web-renderer',
+        'ytd-ad-slot-renderer',
+        'ytd-player-legacy-desktop-watch-ads-renderer',
+        '#masthead-ad',
+        '#player-ads',
+        '.ytp-ad-overlay-container',
+        '.ytp-ad-overlay-slot',
+        'ytd-promoted-sparkles-text-search-renderer',
+        'ytd-player-legacy-desktop-watch-ads-renderer',
+        '.ytd-video-masthead-ad-v3-renderer',
+        '.ytd-ad-slot-renderer'
+    ];
+
+    adElements.forEach(selector => {
+        const adElement = document.querySelector(selector);
+        if (adElement) {
+            adElement.remove();
+        }
+    });
+
+    // Updated skip button selectors and click logic
+    const skipButtonSelectors = [
         '.ytp-ad-skip-button',
         '.ytp-ad-skip-button-modern',
+        'button.ytp-ad-skip-button-modern',
         '.ytp-skip-ad-button',
-        '.ytp-ad-skip-button-container button',
-        'button[data-tooltip-target-id="ad-skip-button"]'
+        'button[data-tooltip-target-id="ad-skip-button"]',
+        '.videoAdUiSkipButton',
+        '.ytp-ad-skip-button-modern'
     ];
-    
-    for (let selector of skipSelectors) {
-        const skipBtn = document.querySelector(selector);
-        if (skipBtn) {
-            skipBtn.click();
-            return;
+
+    for (let selector of skipButtonSelectors) {
+        const skipButton = document.querySelector(selector);
+        if (skipButton) {
+            skipButton.click();
+            console.log('Skip button clicked');
+            break;  // Exit the loop after clicking a button
+        }
+    }
+
+    const video = document.querySelector('video');
+    if (video && video.duration) {
+        if (document.querySelector('.ad-showing')) {
+            video.currentTime = video.duration;
+            console.log('Ad fast-forwarded');
         }
     }
 }
@@ -68,6 +101,7 @@ function checkChannelAndDislike() {
                 if (dislikeButton.getAttribute('aria-pressed') === 'false') {
                     dislikeButton.click();
                     hasDisliked = true;
+                    console.log('Video disliked');
                 }
             }
         }
@@ -89,7 +123,7 @@ new MutationObserver(() => {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "checkForAds") {
-        trySkipAd();
+        skipAd();
         setTimeout(checkChannelAndDislike, 10000);
         sendResponse({status: "Checked for ads and dislikes"});
     }

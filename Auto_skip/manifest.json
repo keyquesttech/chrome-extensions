@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "YouTube Auto Skip and Dislike",
-    "version": "2.4",
-    "description": "Automatically skips ads and dislikes videos from specified channels on YouTube",
+    "name": "YouTube Ad Skipper and Auto Dislike",
+    "version": "1.0",
+    "description": "Skips ads on YouTube and auto-dislikes videos from specific channels",
     "permissions": [
         "storage",
         "tabs"
@@ -13,6 +13,13 @@
     "background": {
         "service_worker": "background.js"
     },
+    "content_scripts": [
+        {
+            "matches": ["*://*.youtube.com/*"],
+            "js": ["content.js"],
+            "run_at": "document_idle"
+        }
+    ],
     "action": {
         "default_popup": "popup.html",
         "default_icon": {
@@ -21,16 +28,9 @@
             "128": "images/icon128.png"
         }
     },
-    "content_scripts": [
-        {
-            "matches": [
-                "*://*.youtube.com/*"
-            ],
-            "js": [
-                "channels.js",
-                "content.js"
-            ],
-            "run_at": "document_end"
-        }
-    ]
+    "icons": {
+        "16": "images/icon16.png",
+        "48": "images/icon48.png",
+        "128": "images/icon128.png"
+    }
 }
