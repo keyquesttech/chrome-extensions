@@ -3,6 +3,7 @@ let hasDisliked = false;
 
 chrome.storage.local.get(['youtubeState'], function (data) {
     youtubeState = data.youtubeState !== undefined ? data.youtubeState : true;
+    console.log('YouTube state loaded:', youtubeState);
     if (youtubeState) {
         initAdSkipper();
         initAutoDislike();
@@ -12,6 +13,7 @@ chrome.storage.local.get(['youtubeState'], function (data) {
 chrome.storage.onChanged.addListener((changes, namespace) => {
     if (changes.youtubeState) {
         youtubeState = changes.youtubeState.newValue;
+        console.log('YouTube state changed:', youtubeState);
         if (youtubeState) {
             initAdSkipper();
             initAutoDislike();
@@ -20,61 +22,80 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
 });
 
 function initAdSkipper() {
-    setInterval(skipAd, 250);  // Check more frequently
+    console.log('Initializing ad skipper');
+    
+    function observeBody() {
+        if (document.body) {
+            const config = { childList: true, subtree: true };
+
+            const callback = function(mutationsList, observer) {
+                if (youtubeState) {
+                    skipAd();
+                }
+            };
+
+            const observer = new MutationObserver(callback);
+            observer.observe(document.body, config);
+
+            // Interval-based approach as a fallback
+            setInterval(skipAd, 300);
+
+            // Add CSS to hide ad overlays
+            const style = document.createElement('style');
+            style.textContent = `
+                .ytp-ad-overlay-container, #player-ads, .ytp-ad-text-overlay {
+                    display: none !important;
+                }
+            `;
+            document.head.appendChild(style);
+        } else {
+            // If body is not available yet, try again after a short delay
+            setTimeout(observeBody, 50);
+        }
+    }
+
+    observeBody();
 }
 
 function skipAd() {
     if (!youtubeState) return;
 
-    const adElements = [
-        '#contents > ytd-promoted-sparkles-web-renderer',
-        'ytd-ad-slot-renderer',
-        'ytd-player-legacy-desktop-watch-ads-renderer',
-        '#masthead-ad',
-        '#player-ads',
-        '.ytp-ad-overlay-container',
-        '.ytp-ad-overlay-slot',
-        'ytd-promoted-sparkles-text-search-renderer',
-        'ytd-player-legacy-desktop-watch-ads-renderer',
-        '.ytd-video-masthead-ad-v3-renderer',
-        '.ytd-ad-slot-renderer'
-    ];
+    console.log('Checking for ads...');
 
-    adElements.forEach(selector => {
-        const adElement = document.querySelector(selector);
-        if (adElement) {
-            adElement.remove();
+    // Select the specific skip button
+    const skipButton = document.querySelector('.ytp-skip-ad-button');
+
+    if (skipButton && skipButton.style.display !== 'none') {
+        console.log('Skip button detected');
+
+        // Ensure the button is focused
+        skipButton.focus();
+
+        // Try clicking via a normal click event
+        skipButton.click();
+        console.log('Skip button clicked via .click()');
+
+        // If the normal click doesn't work, try dispatching a mouse event
+        const clickEvent = new MouseEvent('click', {
+            view: window,
+            bubbles: true,
+            cancelable: true,
+            buttons: 1
+        });
+        skipButton.dispatchEvent(clickEvent);
+        console.log('Skip button clicked via dispatchEvent');
+
+        // Try invoking the click handler directly if possible
+        const clickHandler = skipButton.onclick || skipButton.getAttribute('onclick');
+        if (typeof clickHandler === 'function') {
+            clickHandler.apply(skipButton);
+            console.log('Skip button clicked via direct invocation');
         }
-    });
-
-    // Updated skip button selectors and click logic
-    const skipButtonSelectors = [
-        '.ytp-ad-skip-button',
-        '.ytp-ad-skip-button-modern',
-        'button.ytp-ad-skip-button-modern',
-        '.ytp-skip-ad-button',
-        'button[data-tooltip-target-id="ad-skip-button"]',
-        '.videoAdUiSkipButton',
-        '.ytp-ad-skip-button-modern'
-    ];
-
-    for (let selector of skipButtonSelectors) {
-        const skipButton = document.querySelector(selector);
-        if (skipButton) {
-            skipButton.click();
-            console.log('Skip button clicked');
-            break;  // Exit the loop after clicking a button
-        }
-    }
-
-    const video = document.querySelector('video');
-    if (video && video.duration) {
-        if (document.querySelector('.ad-showing')) {
-            video.currentTime = video.duration;
-            console.log('Ad fast-forwarded');
-        }
+    } else {
+        console.log('No skip button detected or button not visible');
     }
 }
+
 
 function initAutoDislike() {
     const observer = new MutationObserver(() => {
@@ -95,13 +116,13 @@ function checkChannelAndDislike() {
     if (channelNameElement) {
         const channelName = channelNameElement.textContent.trim();
         
-        if (channelName === 'Linus Tech Tips') {
+        if (window.channelsToDislike.includes(channelName)) {
             const dislikeButton = document.querySelector('button[aria-label="Dislike this video"]');
             if (dislikeButton) {
                 if (dislikeButton.getAttribute('aria-pressed') === 'false') {
                     dislikeButton.click();
                     hasDisliked = true;
-                    console.log('Video disliked');
+                    console.log('Video disliked for channel:', channelName);
                 }
             }
         }
