@@ -1,84 +1,145 @@
 let youtubeState = true;
 let hasDisliked = false;
 
-chrome.storage.local.get(['youtubeState'], function (data) {
-    youtubeState = data.youtubeState !== undefined ? data.youtubeState : true;
-    console.log('YouTube state loaded:', youtubeState);
+function debugLog(message) {
+    console.log(`[Ad Skip Debug] ${message}`);
+    chrome.runtime.sendMessage({ action: "logDebug", message: message });
+}
+
+// Request initial state from background script
+chrome.runtime.sendMessage({ action: "getYoutubeState" }, function(response) {
+    youtubeState = response.youtubeState;
+    debugLog('YouTube state loaded: ' + youtubeState);
     if (youtubeState) {
         initAdSkipper();
         initAutoDislike();
     }
 });
 
-chrome.storage.onChanged.addListener((changes, namespace) => {
-    if (changes.youtubeState) {
-        youtubeState = changes.youtubeState.newValue;
-        console.log('YouTube state changed:', youtubeState);
+// Listen for state changes from background script
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === "youtubeStateChanged") {
+        youtubeState = request.youtubeState;
+        debugLog('YouTube state changed: ' + youtubeState);
         if (youtubeState) {
             initAdSkipper();
             initAutoDislike();
         }
+    } else if (request.action === "checkForAds") {
+        if (youtubeState) {
+            debugLog('Checking for ads...');
+            attemptSkipAd();
+        }
+        setTimeout(checkChannelAndDislike, 10000);
+        sendResponse({status: "Checked for ads and dislikes"});
     }
 });
 
-function initAdSkipper() {
-    console.log('Initializing ad skipper');
-    
-    function observeBody() {
-        if (document.body) {
-            const config = { childList: true, subtree: true };
-
-            const callback = function(mutationsList, observer) {
-                if (youtubeState) {
-                    skipAd();
-                }
-            };
-
-            const observer = new MutationObserver(callback);
-            observer.observe(document.body, config);
-
-            // Interval-based approach as a fallback
-            setInterval(skipAd, 300);
-
-            // Add CSS to hide ad overlays
-            const style = document.createElement('style');
-            style.textContent = `
-                .ytp-ad-overlay-container, #player-ads, .ytp-ad-text-overlay {
-                    display: none !important;
-                }
-            `;
-            document.head.appendChild(style);
-        } else {
-            // If body is not available yet, try again after a short delay
-            setTimeout(observeBody, 50);
-        }
-    }
-
-    observeBody();
+function waitForElement(selector, timeout = 10000) {
+    return new Promise((resolve, reject) => {
+        const startTime = Date.now();
+        const checkElement = () => {
+            const element = document.querySelector(selector);
+            if (element) {
+                resolve(element);
+            } else if (Date.now() - startTime > timeout) {
+                reject(new Error(`Element ${selector} not found within ${timeout}ms`));
+            } else {
+                setTimeout(checkElement, 100);
+            }
+        };
+        checkElement();
+    });
 }
 
-function skipAd() {
-    if (!youtubeState) return;
+async function attemptSkipAd() {
+    debugLog('Attempting to skip ad...');
 
-    console.log('Checking for ads...');
+    const selectors = [
+        '.ytp-ad-skip-button',
+        '.ytp-ad-skip-button-modern',
+        'button[aria-label="Skip Ad"]',
+        'button[data-tooltip-target-id="ytp-ad-skip-button-container"]'
+    ];
 
-    const adOverlay = document.querySelector('.ytp-ad-player-overlay');
-    const video = document.querySelector('video');
+    for (const selector of selectors) {
+        try {
+            const button = await waitForElement(selector, 5000);
+            debugLog(`Skip button found: ${selector}`);
+            
+            const buttonInfo = {
+                visible: button.offsetWidth > 0 && button.offsetHeight > 0,
+                enabled: !button.disabled,
+                clickable: window.getComputedStyle(button).pointerEvents !== 'none'
+            };
+            debugLog(`Button state: ${JSON.stringify(buttonInfo)}`);
 
-    if (adOverlay && video) {
-        console.log('Ad detected');
-        const skipButton = document.querySelector('.ytp-skip-ad-button, .ytp-skip-ad-button-modern, .ytp-skip-button');
-        
-        if (skipButton) {
-            console.log('Skip button detected');
-            skipButton.click();
-        } else {
-            console.log('No skip button found, fast-forwarding ad');
-            video.currentTime = video.duration;
+            // Attempt to click using different methods
+            debugLog('Attempting direct click...');
+            button.click();
+
+            debugLog('Dispatching mousedown, mouseup, and click events...');
+            ['mousedown', 'mouseup', 'click'].forEach(eventType => {
+                const event = new MouseEvent(eventType, {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true
+                });
+                button.dispatchEvent(event);
+            });
+
+            debugLog('Attempting to trigger onclick handler...');
+            if (typeof button.onclick === 'function') {
+                button.onclick();
+            }
+
+            // Check if the ad was skipped
+            setTimeout(() => {
+                const adStillPlaying = document.querySelector('.ytp-ad-player-overlay');
+                if (adStillPlaying) {
+                    debugLog('Ad still playing after skip attempts.');
+                } else {
+                    debugLog('Ad appears to have been skipped successfully.');
+                }
+            }, 1000);
+
+            return;
+        } catch (error) {
+            debugLog(`Error with selector ${selector}: ${error.message}`);
         }
-    } else {
-        console.log('No ad detected');
     }
+
+    debugLog('No skip button found.');
+}
+
+function initAdSkipper() {
+    debugLog('Initializing ad skipper');
+    
+    const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            if (mutation.target.classList.contains('ytp-ad-player-overlay')) {
+                debugLog('Ad detected. Attempting to skip...');
+                attemptSkipAd();
+                break;
+            }
+        }
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class']
+    });
+
+    // Add CSS to hide ad overlays
+    const style = document.createElement('style');
+    style.textContent = `
+        .ytp-ad-overlay-container, #player-ads, .ytp-ad-text-overlay {
+            display: none !important;
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 function initAutoDislike() {
@@ -106,7 +167,7 @@ function checkChannelAndDislike() {
                 if (dislikeButton.getAttribute('aria-pressed') === 'false') {
                     dislikeButton.click();
                     hasDisliked = true;
-                    console.log('Video disliked for channel:', channelName);
+                    debugLog('Video disliked for channel: ' + channelName);
                 }
             }
         }
@@ -126,10 +187,4 @@ new MutationObserver(() => {
     }
 }).observe(document, {subtree: true, childList: true});
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === "checkForAds") {
-        skipAd();
-        setTimeout(checkChannelAndDislike, 10000);
-        sendResponse({status: "Checked for ads and dislikes"});
-    }
-});
+debugLog('Ad skip debug script loaded. Waiting for ads...');

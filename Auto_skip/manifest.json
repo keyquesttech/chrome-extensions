@@ -1,12 +1,11 @@
 {
     "manifest_version": 3,
     "name": "YouTube Ad Skipper and Auto Dislike",
-    "version": "1.0",
+    "version": "1.008",
     "description": "Skips ads on YouTube and auto-dislikes videos from specific channels",
     "permissions": [
         "storage",
-        "tabs",
-        "activeTab"
+        "tabs"
     ],
     "host_permissions": [
         "*://*.youtube.com/*"
