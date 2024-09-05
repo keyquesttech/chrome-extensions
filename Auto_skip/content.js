@@ -62,40 +62,24 @@ function skipAd() {
 
     console.log('Checking for ads...');
 
-    // Select the specific skip button
-    const skipButton = document.querySelector('.ytp-skip-ad-button');
+    const adOverlay = document.querySelector('.ytp-ad-player-overlay');
+    const video = document.querySelector('video');
 
-    if (skipButton && skipButton.style.display !== 'none') {
-        console.log('Skip button detected');
-
-        // Ensure the button is focused
-        skipButton.focus();
-
-        // Try clicking via a normal click event
-        skipButton.click();
-        console.log('Skip button clicked via .click()');
-
-        // If the normal click doesn't work, try dispatching a mouse event
-        const clickEvent = new MouseEvent('click', {
-            view: window,
-            bubbles: true,
-            cancelable: true,
-            buttons: 1
-        });
-        skipButton.dispatchEvent(clickEvent);
-        console.log('Skip button clicked via dispatchEvent');
-
-        // Try invoking the click handler directly if possible
-        const clickHandler = skipButton.onclick || skipButton.getAttribute('onclick');
-        if (typeof clickHandler === 'function') {
-            clickHandler.apply(skipButton);
-            console.log('Skip button clicked via direct invocation');
+    if (adOverlay && video) {
+        console.log('Ad detected');
+        const skipButton = document.querySelector('.ytp-skip-ad-button, .ytp-skip-ad-button-modern, .ytp-skip-button');
+        
+        if (skipButton) {
+            console.log('Skip button detected');
+            skipButton.click();
+        } else {
+            console.log('No skip button found, fast-forwarding ad');
+            video.currentTime = video.duration;
         }
     } else {
-        console.log('No skip button detected or button not visible');
+        console.log('No ad detected');
     }
 }
-
 
 function initAutoDislike() {
     const observer = new MutationObserver(() => {
