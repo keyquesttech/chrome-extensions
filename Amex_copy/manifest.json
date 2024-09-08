@@ -1,0 +1,16 @@
+{
+    "manifest_version": 3,
+    "name": "Transaction Info Copier",
+    "version": "1.3",
+    "description": "Copy transaction information from the page",
+    "permissions": ["activeTab", "scripting", "clipboardWrite"],
+    "action": {
+      "default_popup": "popup.html"
+    },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"]
+      }
+    ]
+  }
