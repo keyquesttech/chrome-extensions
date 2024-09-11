@@ -1,16 +1,26 @@
 {
-    "manifest_version": 3,
-    "name": "Transaction Info Copier",
-    "version": "1.3",
-    "description": "Copy transaction information from the page",
-    "permissions": ["activeTab", "scripting", "clipboardWrite"],
-    "action": {
-      "default_popup": "popup.html"
-    },
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["content.js"]
-      }
-    ]
-  }
+  "manifest_version": 3,
+  "name": "Transaction Info Copier",
+  "version": "1.5",
+  "description": "Copy transaction information from the page",
+  "icons": {
+      "16": "icons/copy-data-icon.svg",
+      "48": "icons/copy-data-icon.svg",
+      "128": "icons/copy-data-icon.svg"
+  },
+  "permissions": ["activeTab", "scripting", "clipboardWrite"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "Icons/copy-data-icon.svg",
+      "48": "Icons/copy-data-icon.svg",
+      "128": "Icons/copy-data-icon.svg"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}

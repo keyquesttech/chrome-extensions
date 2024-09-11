@@ -1,18 +1,90 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Transaction Info Copier</title>
+  <title>Amex Info Copier</title>
   <style>
-    body { width: 300px; padding: 10px; }
-    button { margin: 5px; padding: 5px 10px; }
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
+    body {
+      width: 300px;
+      height: 360px;
+      padding: 0;
+      margin: 0;
+      font-family: 'Quicksand', sans-serif;
+      background-color: #ff8672;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    h2 {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 29px;
+      margin: 0 0 20px 0;
+    }
+    button {
+      margin: 10px 0;
+      width: 250px;
+      height: 40px;
+      font-family: 'Quicksand', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      padding: 4px;
+      box-sizing: border-box;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    button:hover {
+      background-color: #1976D2;
+    }
+    button.clicked {
+      background-color: white;
+      color: #2196F3;
+    }
+    #status-container {
+      margin-top: 20px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #status {
+      font-size: 14px;
+      text-align: center;
+      padding: 5px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      width: 250px;
+      min-height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
-  <h2>Copy Transaction Info</h2>
-  <button id="copyAmount">Copy All Amounts</button>
-  <button id="copyDescription">Copy All Descriptions</button>
-  <button id="copyDate">Copy All Dates</button>
-  <div id="status"></div>
+  <div class="content">
+    <h2>Copy amex info</h2>
+    <button id="copyAmount">Copy All Amounts</button>
+    <button id="copyDescription">Copy All Descriptions</button>
+    <button id="copyDate">Copy All Dates</button>
+    <div id="status-container">
+      <div id="status">Go to amex website to copy</div>
+    </div>
+  </div>
   <script src="popup.js"></script>
 </body>
 </html>
