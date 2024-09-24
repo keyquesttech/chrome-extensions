@@ -12,9 +12,9 @@
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "Icons/copy-data-icon.svg",
-      "48": "Icons/copy-data-icon.svg",
-      "128": "Icons/copy-data-icon.svg"
+      "16": "Icons/copy-data-icon-16.png",
+      "48": "Icons/copy-data-icon-48.png",
+      "128": "Icons/copy-data-icon-128.png"
     }
   },
   "content_scripts": [
