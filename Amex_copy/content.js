@@ -3,21 +3,17 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log(`Received request: ${request.action}`);
     let elements = [];
     let selectors = {
+      // Updated selector for Amount
       copyAmount: [
-        '.col-md-3.col-sm-4.pad-responsive-r.flex.flex-column-md.flex-justify-end p',
-        '[data-test-id="transaction-amount"]',
-        '.transaction-amount'
+        'p.body-bold.flex-item-grow.text-align-right.text-nowrap'
       ],
+      // Updated selector for Description
       copyDescription: [
-        '.description',
-        '[data-test-id="transaction-description"]',
-        '.transaction-description'
+        'a[id^="NotExpandedExtendedTransaction"][data-icon="false"]'
       ],
+      // Updated selector for Date
       copyDate: [
-        '.css-qv4r03:not([for="select-all-transactions"])',
-        '.col-sm-3.col-md-2 p',
-        '[data-test-id="transaction-date"]',
-        '.transaction-date'
+        'div.font-weight-regular.body-bold.text-nowrap'
       ]
     };
 
