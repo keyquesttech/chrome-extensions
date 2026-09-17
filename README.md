@@ -19,8 +19,8 @@ A collection of custom endstops for 3d printers or cnc machines.
 A PCB to add more thermistors to a klipper printer.
 
 Chrome extensions:
- - [Youtube ads auto skip.](https://github.com/keyquesttech/chrome-extensions)
-A chrome extension that emulates a click and auto skips youtube ads. Works even after adblock prevention measures.
+ - [YouTube Picture-in-Picture.](https://github.com/keyquesttech/chrome-extensions/tree/main/PIP)
+Adds a picture-in-picture button next to the fullscreen button on the YouTube player, with optional automatic picture-in-picture when you switch tabs. Privacy policy: [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
 
 Keyboards:
  - [Enclave.](https://github.com/keyquesttech/Enclave)
