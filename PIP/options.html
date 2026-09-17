@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>YouTube Picture-in-Picture — Settings</title>
+    <style>
+        :root {
+            --bg: #0f0f0f;
+            --surface: #212121;
+            --hover: rgba(255, 255, 255, 0.1);
+            --text: #ffffff;
+            --text-secondary: #aaaaaa;
+            --divider: rgba(255, 255, 255, 0.2);
+            --accent: #ff0000;
+            --link: #3ea6ff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0 16px 48px;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: Roboto, 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .card {
+            max-width: 600px;
+            margin: 32px auto 0;
+            padding: 24px;
+            box-sizing: border-box;
+            background-color: var(--surface);
+            border-radius: 12px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .header svg {
+            display: block;
+            flex-shrink: 0;
+            fill: var(--text);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        p.note {
+            color: var(--text-secondary);
+            margin: 8px 0;
+        }
+
+        .settings {
+            margin-top: 16px;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            min-height: 40px;
+            padding: 8px 12px;
+            margin: 0 -12px;
+            box-sizing: border-box;
+            cursor: pointer;
+            border-bottom: 1px solid var(--divider);
+        }
+
+        .row:hover {
+            background-color: var(--hover);
+        }
+
+        .settings .row:last-child {
+            border-bottom: none;
+        }
+
+        .row .label {
+            cursor: pointer;
+            flex-grow: 1;
+            font-weight: 500;
+        }
+
+        .row .hint {
+            display: block;
+            font-weight: 400;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 36px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            left: 0;
+            right: 0;
+            top: 3px;
+            height: 14px;
+            border-radius: 7px;
+            background-color: rgba(255, 255, 255, 0.3);
+            transition: background-color 0.15s ease;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 0;
+            top: -3px;
+            border-radius: 50%;
+            background-color: #bdbdbd;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            transition: transform 0.15s ease, background-color 0.15s ease;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent);
+        }
+
+        input:checked + .slider:before {
+            background-color: #ffffff;
+            transform: translateX(16px);
+        }
+
+        .switch input:focus-visible + .slider {
+            outline: 2px solid var(--link);
+            outline-offset: 3px;
+        }
+
+        #status {
+            margin-top: 12px;
+            color: var(--link);
+            font-weight: 500;
+            min-height: 1.2em;
+        }
+
+        h2 {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text);
+            margin: 0;
+            padding-top: 20px;
+            border-top: 1px solid var(--divider);
+        }
+
+        section { margin-top: 28px; }
+
+        code {
+            background-color: var(--hover);
+            color: var(--text);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Roboto Mono', Consolas, monospace;
+            font-size: 13px;
+        }
+
+        ul {
+            padding-left: 20px;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        li::marker {
+            color: var(--text-secondary);
+        }
+
+        strong { color: var(--text); }
+
+        a {
+            color: var(--link);
+            text-decoration: none;
+        }
+
+        a:hover { text-decoration: underline; }
+
+        a:focus-visible {
+            outline: 2px solid var(--link);
+            outline-offset: 2px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .slider,
+            .slider:before {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header">
+            <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+                <path d="M1 6a2 2 0 012-2h18a2 2 0 012 2v12a2 2 0 01-2 2H3a2 2 0 01-2-2V6Zm2 0v12h18V6H3Zm16 6h-6v4h6v-4Z"></path>
+            </svg>
+            <h1>YouTube Picture-in-Picture</h1>
+        </div>
+        <p class="note">Settings are saved automatically and sync with your Chrome profile.</p>
+
+        <div class="settings">
+            <div class="row">
+                <label class="label" for="enabled">Show the PiP button in the player
+                    <span class="hint">Adds a picture-in-picture button just to the right of the fullscreen button.</span>
+                </label>
+                <label class="switch">
+                    <input type="checkbox" id="enabled">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="row">
+                <label class="label" for="autoPip">Enter PiP automatically when I switch away from the tab
+                    <span class="hint">Requires Chrome's automatic picture-in-picture permission — see below.</span>
+                </label>
+                <label class="switch">
+                    <input type="checkbox" id="autoPip">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="row">
+                <label class="label" for="autoExitOnReturn">Leave PiP when I come back to the tab
+                    <span class="hint">Only applies to windows this extension opened automatically.</span>
+                </label>
+                <label class="switch">
+                    <input type="checkbox" id="autoExitOnReturn">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="row">
+                <label class="label" for="onlyWhenPlaying">Only open PiP automatically while the video is playing
+                    <span class="hint">Paused or ended videos are left alone.</span>
+                </label>
+                <label class="switch">
+                    <input type="checkbox" id="onlyWhenPlaying">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <p id="status"></p>
+
+        <section>
+            <h2>How automatic PiP works</h2>
+            <p class="note">
+                A page cannot open picture-in-picture on its own without a click. The one exception
+                Chrome offers is the Media Session <code>enterpictureinpicture</code> action: Chrome
+                itself fires that action when you switch away from a tab that is playing media, and
+                this extension registers a handler for it.
+            </p>
+            <p class="note">
+                According to Chrome's documentation, automatic picture-in-picture for media playback
+                is available from <strong>Chrome 134</strong> (rolled out gradually), and a page is only
+                eligible when all of the following are true:
+            </p>
+            <ul>
+                <li>The video is in the top frame of the page (not an iframe).</li>
+                <li>The video is playing, has audio focus, and was audible within the last two seconds.</li>
+                <li>The site has registered an <code>enterpictureinpicture</code> media session handler.</li>
+                <li>Your Media Engagement Index for the site is above Chrome's threshold — that is,
+                    you watch media on youtube.com often enough — <em>or</em> you have explicitly
+                    allowed automatic picture-in-picture for the site.</li>
+                <li>The page's URL is considered safe by Safe Browsing.</li>
+            </ul>
+            <p class="note">
+                Chrome documents that the automatic picture-in-picture window opens unfocused and is
+                closed again by Chrome when the page becomes visible. The "Leave PiP when I come back"
+                option above is a safety net for the cases where that does not happen.
+            </p>
+        </section>
+
+        <section>
+            <h2>If automatic PiP never triggers</h2>
+            <p class="note">
+                Chrome may show a prompt asking whether youtube.com may enter picture-in-picture
+                automatically (every time, just once, or never). You can also set it yourself. Chrome
+                settings pages cannot be opened from a link, so copy this address into the address bar:
+            </p>
+            <ul>
+                <li><code>chrome://settings/content</code> — then open <strong>Additional permissions</strong>
+                    and choose <strong>Automatic picture-in-picture</strong>, and allow it for
+                    <code>https://www.youtube.com</code>.</li>
+            </ul>
+            <p class="note">
+                You can also reach the same permission from the icon at the left of the address bar
+                while you are on YouTube: <strong>Site settings</strong> →
+                <strong>Automatic picture-in-picture</strong>.
+            </p>
+            <p class="note">
+                Note: the exact wording and grouping of this permission differs between Chrome
+                versions, and very recent Chrome versions can open picture-in-picture automatically
+                on their own for some sites. If automatic PiP still does not happen, the PiP button in
+                the player always works, because a click counts as a user gesture.
+            </p>
+        </section>
+    </div>
+
+    <script src="options.js"></script>
+</body>
+</html>

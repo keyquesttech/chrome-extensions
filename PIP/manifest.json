@@ -1,0 +1,58 @@
+{
+    "manifest_version": 3,
+    "name": "YouTube Picture-in-Picture",
+    "version": "1.0.0",
+    "description": "Adds a picture-in-picture button to the YouTube player and can open PiP automatically when you switch tabs.",
+    "minimum_chrome_version": "111",
+    "permissions": [
+        "storage",
+        "scripting"
+    ],
+    "host_permissions": [
+        "*://www.youtube.com/*",
+        "*://m.youtube.com/*"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://www.youtube.com/*",
+                "*://m.youtube.com/*"
+            ],
+            "js": [
+                "bridge.js"
+            ],
+            "run_at": "document_start"
+        },
+        {
+            "matches": [
+                "*://www.youtube.com/*",
+                "*://m.youtube.com/*"
+            ],
+            "js": [
+                "pip-main.js"
+            ],
+            "run_at": "document_start",
+            "world": "MAIN"
+        }
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "images/icon16.png",
+            "48": "images/icon48.png",
+            "128": "images/icon128.png"
+        }
+    },
+    "icons": {
+        "16": "images/icon16.png",
+        "48": "images/icon48.png",
+        "128": "images/icon128.png"
+    },
+    "options_ui": {
+        "page": "options.html",
+        "open_in_tab": true
+    }
+}
